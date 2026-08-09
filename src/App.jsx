@@ -4,8 +4,8 @@ import ToolBar from "./ToolBar";
 function App() {
   return (
     <>
-    <ToolBar/>
-    <Board/>
+      <ToolBar/>
+      <Board/>
     </>
   );
 }
