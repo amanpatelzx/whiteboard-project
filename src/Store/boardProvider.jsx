@@ -34,7 +34,7 @@ const initialBoardState = {
     activeToolItem : TOOL_ITEMS.LINE,
     elements : [],
 };
-const boardProvider = ({children}) => {
+const BoardProvider = ({children}) => {
     const [boardState, dispatchBoardAction] = useReducer(boardReducer, initialBoardState);
     // const [activeToolItem, setActiveToolItem] = useState(TOOL_ITEMS.LINE);
     // const [elements, setElements] = useState([]);
@@ -70,4 +70,4 @@ const boardProvider = ({children}) => {
   )
 }   
 
-export default boardProvider
+export default BoardProvider;

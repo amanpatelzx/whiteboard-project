@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 import Board from "./board";
 import ToolBar from "./ToolBar";
-import boardProvider from "./Store/boardProvider";
+import BoardProvider from "./Store/boardProvider";
 function App() {
   return (
     <>
-      <boardProvider>
-        <Board/>
+      <BoardProvider>
         <ToolBar/>
-      </boardProvider>
+        <Board/>
+      </BoardProvider>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-const boardContext = createContext({
+const BoardContext = createContext({
     activeToolItem : "",
     elements : [],
     handleToolItemClick : () => {},
@@ -8,4 +8,4 @@ const boardContext = createContext({
 
 });
 
-export default boardContext;
+export default BoardContext;
