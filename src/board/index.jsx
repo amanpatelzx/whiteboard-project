@@ -2,9 +2,10 @@ import { useContext, useEffect, useRef } from "react";
 import boardContext from "../Store/board-context";
 import rough from 'roughjs';
 import classes from "./index.module.css"
+import { TOOL_ACTION_TYPES } from "../constants";
 function Board() {
   const canvasRef = useRef();
-  const {elements, boardMouseDownHandler } = useContext(boardContext);
+  const {elements, boardMouseDownHandler, boardMouseMoveHandler ,boardMouseUpHandler, toolActionType} = useContext(boardContext);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,11 +34,19 @@ function Board() {
     }
   }, [elements])
 
-  const handleBoardMouseDown = (event) => {
+  const handleMouseDown = (event) => {
       boardMouseDownHandler(event);
   };
+  const handleMouseMove = (event) => {
+    if(toolActionType === TOOL_ACTION_TYPES.DRAWING) boardMouseMoveHandler(event);
+  };
+  const handleMouseUp = () => {
+    boardMouseUpHandler();
+  };
   return (
-    <canvas ref={canvasRef} onMouseDown={handleBoardMouseDown} />
+    <canvas ref={canvasRef} onMouseDown={handleMouseDown} 
+    onMouseMove={handleMouseMove}
+     onMouseUp={handleMouseUp} />
   );
 }
 
