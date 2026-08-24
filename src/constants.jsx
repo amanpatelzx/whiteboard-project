@@ -6,6 +6,7 @@ export const TOOL_ITEMS = {
   ARROW: "ARROW",
   ERASER: "ERASER",
   TEXT: "TEXT",
+  ELLIPSE : "ELLIPSE"
 };
 
 export const TOOL_ACTION_TYPES = {

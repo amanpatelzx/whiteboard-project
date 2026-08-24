@@ -22,6 +22,15 @@ export const createRoughElement = (id, x1, y1, x2, y2, {type}) => {
             element.roughEle = gen.rectangle(x1, y1, x2-x1, y2-y1, option);
             return element;
         }
+        case TOOL_ITEMS.CIRCLE:{
+            const radius = Math.sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
+            element.roughEle = gen.circle(x2, y2, radius*2, option);
+            return element; 
+        }
+        case TOOL_ITEMS.ELLIPSE:{
+            element.roughEle = gen.ellipse((x1+x2)/2, (y1+y2)/2 ,x1 - x2, y1- y2 , option);
+            return element; 
+        }
         default:{
             throw new Error("Type is not recognized");
         }
