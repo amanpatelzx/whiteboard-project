@@ -6,20 +6,20 @@ import { LuRectangleHorizontal } from 'react-icons/lu'
 import boardContex from '../Store/board-context';
 import { TOOL_ITEMS } from '../constants';
 const ToolBar = () => {
-    const {activeToolItem, handleToolItemClick} = useContext(boardContex);
+    const {activeToolItem, changeToolHandler} = useContext(boardContex);
     return (
         <div className={classes.container}>
             <div className={
-                cx(classes.toolItem, {[classes.toolItem.active] : activeToolItem === "LINE"})
+                cx(classes.toolItem, {[classes.active] : activeToolItem === "LINE"})
             }
-            onClick={() => handleToolItemClick(TOOL_ITEMS.LINE)}
+            onClick={() => changeToolHandler(TOOL_ITEMS.LINE)}
             >
             <FaSlash />
             </div>
             <div className={
-                cx(classes.toolItem, {[classes.toolItem.active] : activeToolItem === "RECTANGLE"})
+                cx(classes.toolItem, {[classes.active] : activeToolItem === "RECTANGLE"})
             }
-            onClick={() => handleToolItemClick(TOOL_ITEMS.RECTANGLE)}
+            onClick={() => changeToolHandler(TOOL_ITEMS.RECTANGLE)}
             >
                 <LuRectangleHorizontal/>
             </div>

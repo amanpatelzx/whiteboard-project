@@ -1,28 +1,29 @@
 import React, { useReducer, useState } from 'react'
 import boardContex from './board-context'
 import rough from "roughjs/bin/rough"
-import { TOOL_ACTION_TYPES, TOOL_ITEMS } from '../constants'
+import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from '../constants'
+import { createRoughElement } from '../utils/elements';
 
 const gen = rough.generator();
 const boardReducer = (state, action)=>{
     switch (action.type){
-        case "CHANGE_TOOL" :{
+        case BOARD_ACTIONS.CHANGE_TOOL :{
             return {
                 ...state,
                 activeToolItem : action.payload.tool,
             };
         }
             
-        case "DRAW_DOWN" :{
+        case BOARD_ACTIONS.DRAW_DOWN :{
             const {clientX, clientY} = action.payload;
-            const newElement = {
-                id : state.elements.length,
-                x1 : clientX,
-                y1 : clientY,
-                x2 : clientX,
-                y2 : clientY,
-                roughEle : gen.line(clientX, clientY, clientX, clientY),
-            }
+            const newElement = createRoughElement(
+                state.elements.length,
+                clientX,
+                clientY,
+                clientX,
+                clientY,
+                {type : state.activeToolItem},
+            );
             const prevElement = state.elements;
             return {
                 ...state,
@@ -31,7 +32,7 @@ const boardReducer = (state, action)=>{
             }
         }
             
-        case "DRAW_MOVE": {
+        case BOARD_ACTIONS.DRAW_MOVE: {
             const { clientX, clientY } = action.payload;
             const idx = state.elements.length - 1;
             if (idx < 0) {
@@ -43,19 +44,27 @@ const boardReducer = (state, action)=>{
             newElements[idx].x2 = clientX;
             newElements[idx].y2 = clientY;
 
-            newElements[idx].roughEle = gen.line(
+            // newElements[idx].roughEle = gen.line(
+            //     newElements[idx].x1,
+            //     newElements[idx].y1,
+            //     clientX,
+            //     clientY,
+            // );  
+            const newElement = createRoughElement(
+                state.elements.length,
                 newElements[idx].x1,
                 newElements[idx].y1,
                 clientX,
                 clientY,
-            );
-
+                {type : state.activeToolItem},
+            )
+            newElements[idx] = newElement;
             return {
                 ...state,
                 elements: newElements,
             };
         }
-        case "DRAW_UP": {
+        case BOARD_ACTIONS.DRAW_UP: {
             return{
                 ...state,
                 toolActionType: TOOL_ACTION_TYPES.NONE,
@@ -76,7 +85,7 @@ const BoardProvider = ({children}) => {
     // const [elements, setElements] = useState([]);
 
     const changeToolHandler = (tool) =>{
-        dispatchBoardAction({type: "CHANGE_TOOL", payload:{
+        dispatchBoardAction({type: BOARD_ACTIONS.CHANGE_TOOL, payload:{
             tool,
         },})
     }
@@ -85,7 +94,7 @@ const BoardProvider = ({children}) => {
         const {clientX, clientY} = event;
         // const roughEle = gen.line(clientX, clientY, clientX, clientY);
         dispatchBoardAction({
-            type: "DRAW_DOWN",
+            type: BOARD_ACTIONS.DRAW_DOWN,
             payload:{
                 clientX,
                 clientY,
@@ -97,7 +106,7 @@ const BoardProvider = ({children}) => {
         const {clientX, clientY} = event;
         // const roughEle = gen.line(clientX, clientY, clientX, clientY);
         dispatchBoardAction({
-            type: "DRAW_MOVE",
+            type: BOARD_ACTIONS.DRAW_MOVE,
             payload:{
                 clientX,
                 clientY,
@@ -107,7 +116,7 @@ const BoardProvider = ({children}) => {
 
     const boardMouseUpHandler = () =>{
         dispatchBoardAction({
-            type: "DRAW_UP",
+            type: BOARD_ACTIONS.DRAW_UP,
         });
     };
     const boardContextValue = {
