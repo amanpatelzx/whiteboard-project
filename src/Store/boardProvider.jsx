@@ -2,7 +2,7 @@ import React, { useContext, useReducer, useState } from 'react'
 import boardContex from './board-context'
 import rough from "roughjs/bin/rough"
 import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from '../constants'
-import { createRoughElement } from '../utils/elements';
+import { createElement } from '../utils/elements';
 import { getSvgPathFromStroke } from '../utils/elements';
 import { isPointNearElement } from '../utils/elements';
 import getStroke from 'perfect-freehand';
@@ -27,7 +27,7 @@ const boardReducer = (state, action)=>{
             
         case BOARD_ACTIONS.DRAW_DOWN :{
             const {clientX, clientY, stroke , fill, size} = action.payload;
-            const newElement = createRoughElement(
+            const newElement = createElement(
                 state.elements.length,
                 clientX,
                 clientY,
@@ -38,7 +38,9 @@ const boardReducer = (state, action)=>{
             const prevElement = state.elements;
             return {
                 ...state,
-                toolActionType : TOOL_ACTION_TYPES.DRAWING,
+                toolActionType : state.activeToolItem === TOOL_ITEMS.TEXT 
+                    ? TOOL_ACTION_TYPES.WRITING 
+                    : TOOL_ACTION_TYPES.DRAWING,
                 elements: [...prevElement, newElement],
             }
         } 
@@ -55,7 +57,7 @@ const boardReducer = (state, action)=>{
                 case TOOL_ITEMS.ARROW:
                 case TOOL_ITEMS.ELLIPSE:
                 const { x1, y1, stroke, fill, size } = newElements[index];
-                const newElement = createRoughElement(index, x1, y1, clientX, clientY, {
+                const newElement = createElement(index, x1, y1, clientX, clientY, {
                     type: state.activeToolItem,
                     stroke,
                     fill,
@@ -93,6 +95,16 @@ const boardReducer = (state, action)=>{
                 elements : newElements,
             }
         }
+        case BOARD_ACTIONS.CHANGE_TEXT:{
+            const idx = state.elements.length-1;
+            const newElements = [...state.elements];
+            newElements[idx].text = action.payload.text;
+            return{
+                ...state,
+                toolActionType : TOOL_ACTION_TYPES.NONE,
+                elements : newElements,
+            }
+        }
         default:
             return state;
     }
@@ -116,7 +128,18 @@ const BoardProvider = ({children}) => {
 
     const boardMouseDownHandler = (event, toolboxState) =>{
         const {clientX, clientY} = event;
-        // const roughEle = gen.line(clientX, clientY, clientX, clientY);
+        
+        // if(boardState.activeToolItem === TOOL_ITEMS.TEXT){
+        //     dispatchBoardAction({
+        //         type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
+        //         payload:{
+        //             actionType: TOOL_ACTION_TYPES.WRITING,
+        //         }
+        //     });
+        //     return;
+        // }
+        if(boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return; 
+
         if(boardState.activeToolItem === TOOL_ITEMS.ERASER){
             dispatchBoardAction({
                 type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
@@ -140,6 +163,8 @@ const BoardProvider = ({children}) => {
 
     const boardMouseMoveHandler = (event) =>{
         const {clientX, clientY} = event;
+        if(boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return;
+
         // const roughEle = gen.line(clientX, clientY, clientX, clientY);
         if(boardState.toolActionType  === TOOL_ACTION_TYPES.DRAWING){
             dispatchBoardAction({
@@ -162,6 +187,7 @@ const BoardProvider = ({children}) => {
     };
 
     const boardMouseUpHandler = () =>{
+        if(boardState.toolActionType === TOOL_ACTION_TYPES.WRITING) return; 
         dispatchBoardAction({
             type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
             payload:{
@@ -169,6 +195,16 @@ const BoardProvider = ({children}) => {
             }
         });
     };
+
+    const textAreaBlurHandler = (text, toolboxState) => {
+        dispatchBoardAction({
+            type : BOARD_ACTIONS.CHANGE_TEXT,
+            payload: {
+                text,
+            }
+        })
+    }
+
     const boardContextValue = {
         activeToolItem : boardState.activeToolItem,
         elements : boardState.elements,
@@ -177,6 +213,7 @@ const BoardProvider = ({children}) => {
         boardMouseDownHandler,
         boardMouseMoveHandler,
         boardMouseUpHandler,
+        textAreaBlurHandler,
     };
 
 

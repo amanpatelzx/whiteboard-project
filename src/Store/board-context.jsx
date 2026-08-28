@@ -8,6 +8,8 @@ const BoardContext = createContext({
     boardMouseDownHandler : () => {},
     boardMouseMoveHandler : () => {},
     boardMouseUpHandler : () => {},
+    textAreaBlurHandler : () => {},
+
 
 });
 
