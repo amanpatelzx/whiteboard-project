@@ -25,6 +25,7 @@ export const createElement = (id, x1, y1, x2, y2, {type, stroke, fill, size}) =>
     }
     if(fill){
         option.fill = fill;
+        option.fillStyle = 'solid'
     }
     if(size){
         option.strokeWidth = size;

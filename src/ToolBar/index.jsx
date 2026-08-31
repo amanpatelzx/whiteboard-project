@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import classes from "./index.module.css"
 import cx from "classnames"
-import { FaEraser, FaPaintBrush, FaSlash, FaFont } from "react-icons/fa";
+import { FaEraser, FaPaintBrush, FaSlash, FaFont, FaUndoAlt, FaRedoAlt } from "react-icons/fa";
 import { LuRectangleHorizontal } from 'react-icons/lu'
 import { FaRegCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
@@ -9,7 +9,7 @@ import { TbOvalVertical } from "react-icons/tb";
 import boardContex from '../Store/board-context';
 import { TOOL_ITEMS } from '../constants';
 const ToolBar = () => {
-    const {activeToolItem, changeToolHandler} = useContext(boardContex);
+    const {activeToolItem, changeToolHandler, undo, redo} = useContext(boardContex);
     return (
         <div className={classes.container}>
             <div className={
@@ -71,6 +71,21 @@ const ToolBar = () => {
             onClick={() => changeToolHandler(TOOL_ITEMS.TEXT )}
             >
                 <FaFont/>
+            </div>
+
+            <div className={
+                classes.toolItem
+            }
+            onClick={() => undo()}
+            >
+                <FaUndoAlt/>
+            </div>
+            <div className={
+                classes.toolItem
+            }
+            onClick={() => redo()}
+            >
+                <FaRedoAlt/>
             </div>
         </div>
     );
